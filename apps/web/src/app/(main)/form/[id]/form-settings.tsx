@@ -3,14 +3,20 @@
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BellRing, ExternalLink, FolderPen, FolderX, Shield } from 'lucide-react';
+import {
+  BellRing,
+  ExternalLink,
+  FolderPen,
+  FolderX,
+  Shield,
+  Webhook,
+} from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { type RouterOutputs } from '@formbase/api';
 import { type User } from '@formbase/auth';
-import { LoadingButton } from '~/components/loading-button';
 import {
   Form,
   FormControl,
@@ -23,6 +29,7 @@ import { Input } from '@formbase/ui/primitives/input';
 import { Label } from '@formbase/ui/primitives/label';
 import { Switch } from '@formbase/ui/primitives/switch';
 
+import { LoadingButton } from '~/components/loading-button';
 import { api } from '~/lib/trpc/react';
 
 import { revalidateDashboard } from '../../_actions/revalidateDashboard';
@@ -54,6 +61,11 @@ const defaultSubmissionEmailSchema = z.object({
 
 const honeypotFieldSchema = z.object({
   honeypotField: z.string().min(1).optional(),
+});
+
+const webhookSettingsSchema = z.object({
+  enableWebhook: z.boolean().default(false).optional(),
+  webhookUrl: z.string().url().optional().or(z.literal('')),
 });
 
 type FormNameSchema = z.infer<typeof formNameSchema>;
@@ -110,6 +122,12 @@ export function FormSettings({ form, user }: FormSettingsProps) {
       <HoneypotFieldSetting
         formId={form.id}
         honeypotField={form.honeypotField}
+      />
+
+      <WebhookSettings
+        formId={form.id}
+        enableWebhook={form.enableWebhook}
+        webhookUrl={form.webhookUrl ?? ''}
       />
 
       <div className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -562,7 +580,9 @@ const HoneypotFieldSetting = ({
 
   return (
     <Form {...honeypotFieldForm}>
-      <form onSubmit={honeypotFieldForm.handleSubmit(handleHoneypotFieldSubmit)}>
+      <form
+        onSubmit={honeypotFieldForm.handleSubmit(handleHoneypotFieldSubmit)}
+      >
         <FormField
           control={honeypotFieldForm.control}
           name="honeypotField"
@@ -592,5 +612,166 @@ const HoneypotFieldSetting = ({
         />
       </form>
     </Form>
+  );
+};
+
+type WebhookSettingsSchema = z.infer<typeof webhookSettingsSchema>;
+
+const WebhookSettings = ({
+  formId,
+  enableWebhook,
+  webhookUrl,
+}: {
+  formId: string;
+  enableWebhook: boolean;
+  webhookUrl: string;
+}) => {
+  const router = useRouter();
+
+  const webhookForm = useForm<WebhookSettingsSchema>({
+    resolver: zodResolver(webhookSettingsSchema),
+    defaultValues: {
+      enableWebhook,
+      webhookUrl,
+    },
+  });
+
+  const watchEnableWebhook = webhookForm.watch('enableWebhook');
+
+  const { mutateAsync: updateWebhookSettings, isPending: isUpdating } =
+    api.form.update.useMutation();
+
+  const { mutateAsync: testWebhook, isPending: isTesting } =
+    api.form.testWebhook.useMutation();
+
+  async function handleEnableWebhookChange(isChecked: boolean) {
+    webhookForm.setValue('enableWebhook', isChecked);
+
+    try {
+      await updateWebhookSettings({
+        id: formId,
+        enableWebhook: isChecked,
+      });
+
+      toast(
+        isChecked ? 'Webhook has been enabled' : 'Webhook has been disabled',
+        { icon: <Webhook className="h-4 w-4" /> },
+      );
+
+      router.refresh();
+    } catch {
+      toast('Failed to update webhook settings', {
+        description: 'Please try again later',
+        icon: <FolderX className="h-4 w-4" />,
+      });
+    }
+  }
+
+  async function handleWebhookUrlSubmit(data: WebhookSettingsSchema) {
+    try {
+      await updateWebhookSettings({
+        id: formId,
+        webhookUrl: data.webhookUrl || null,
+      });
+
+      toast('Webhook URL has been updated', {
+        icon: <Webhook className="h-4 w-4" />,
+      });
+
+      router.refresh();
+    } catch {
+      toast('Failed to update webhook URL', {
+        description: 'URL must use HTTPS (localhost allowed for development)',
+        icon: <FolderX className="h-4 w-4" />,
+      });
+    }
+  }
+
+  async function handleTestWebhook() {
+    try {
+      await testWebhook({ formId });
+      toast('Test webhook has been queued', {
+        description: 'Check your webhook endpoint for the delivery',
+        icon: <Webhook className="h-4 w-4" />,
+      });
+    } catch {
+      toast('Failed to send test webhook', {
+        description: 'Make sure webhook is enabled and URL is configured',
+        icon: <FolderX className="h-4 w-4" />,
+      });
+    }
+  }
+
+  return (
+    <div className="space-y-4 rounded-lg border p-4">
+      <Form {...webhookForm}>
+        <FormField
+          control={webhookForm.control}
+          name="enableWebhook"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Enable Webhook</FormLabel>
+                <FormDescription>
+                  Send an HTTP POST request on every form submission
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value ?? false}
+                  onCheckedChange={handleEnableWebhookChange}
+                  disabled={isUpdating}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </Form>
+
+      {watchEnableWebhook && (
+        <Form {...webhookForm}>
+          <form onSubmit={webhookForm.handleSubmit(handleWebhookUrlSubmit)}>
+            <FormField
+              control={webhookForm.control}
+              name="webhookUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Webhook URL</FormLabel>
+                  <FormControl>
+                    <div className="flex gap-2">
+                      <Input
+                        className="flex-1"
+                        {...field}
+                        placeholder="https://example.com/webhook"
+                        type="url"
+                      />
+                      <LoadingButton
+                        loading={isUpdating}
+                        type="submit"
+                        variant="default"
+                      >
+                        Save
+                      </LoadingButton>
+                      <LoadingButton
+                        loading={isTesting}
+                        type="button"
+                        variant="outline"
+                        onClick={handleTestWebhook}
+                        disabled={!webhookUrl}
+                      >
+                        Test
+                      </LoadingButton>
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Must use HTTPS (localhost allowed for development)
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      )}
+    </div>
   );
 };

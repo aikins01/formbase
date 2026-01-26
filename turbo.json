@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["apps/web/.env.local"],
+  "globalDependencies": [".env.local"],
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:migrate"],
@@ -29,7 +29,8 @@
         "STORAGE_USESSL",
         "STORAGE_ACCESS_KEY",
         "STORAGE_SECRET_KEY",
-        "STORAGE_BUCKET"
+        "STORAGE_BUCKET",
+        "REDIS_URL"
       ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },

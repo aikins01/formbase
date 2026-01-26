@@ -1,3 +1,5 @@
+import type { TestApiKey, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -7,8 +9,6 @@ import {
   createTestForm,
   createTestFormData,
   createTestUser,
-  type TestApiKey,
-  type TestUser,
 } from '../helpers';
 
 describe('API v1', () => {
@@ -63,9 +63,9 @@ describe('API v1', () => {
         await caller.forms.list({ page: 1, perPage: 20 });
       }
 
-      await expect(
-        caller.forms.list({ page: 1, perPage: 20 }),
-      ).rejects.toThrow('Rate limit exceeded');
+      await expect(caller.forms.list({ page: 1, perPage: 20 })).rejects.toThrow(
+        'Rate limit exceeded',
+      );
     });
   });
 
@@ -215,9 +215,9 @@ describe('API v1', () => {
         const caller = await createApiV1Caller(apiKey.key);
         await caller.forms.delete({ formId: form.id });
 
-        await expect(
-          caller.forms.get({ formId: form.id }),
-        ).rejects.toThrow('Form not found');
+        await expect(caller.forms.get({ formId: form.id })).rejects.toThrow(
+          'Form not found',
+        );
       });
 
       it('throws NOT_FOUND for form owned by another user', async () => {
@@ -277,8 +277,14 @@ describe('API v1', () => {
 
     describe('bulkUpdate', () => {
       it('updates multiple forms', async () => {
-        const form1 = await createTestForm({ userId: user.id, title: 'Form 1' });
-        const form2 = await createTestForm({ userId: user.id, title: 'Form 2' });
+        const form1 = await createTestForm({
+          userId: user.id,
+          title: 'Form 1',
+        });
+        const form2 = await createTestForm({
+          userId: user.id,
+          title: 'Form 2',
+        });
 
         const caller = await createApiV1Caller(apiKey.key);
         await caller.forms.bulkUpdate({

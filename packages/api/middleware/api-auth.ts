@@ -3,9 +3,9 @@ import type { LibSQLDatabase } from 'drizzle-orm/libsql';
 import { drizzlePrimitives } from '@formbase/db';
 import { apiKeys } from '@formbase/db/schema';
 
-const { and, eq, gt, isNull, or } = drizzlePrimitives;
-
 import { hashApiKey } from '../lib/api-key';
+
+const { and, eq, gt, isNull, or } = drizzlePrimitives;
 
 type Database = LibSQLDatabase<Record<string, never>>;
 

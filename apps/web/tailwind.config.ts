@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+
 import { tailwindPreset } from '@formbase/tailwind';
 
 const config: Config = {
@@ -16,7 +17,7 @@ const config: Config = {
       },
     },
   },
-presets: [tailwindPreset],
+  presets: [tailwindPreset],
 };
 
 export default config;

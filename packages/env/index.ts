@@ -53,6 +53,8 @@ export const env = createEnv({
     SMTP_TRANSPORT: z.enum(['smtp', 'resend']).optional(),
 
     VERCEL_URL: z.string().optional(),
+
+    REDIS_URL: z.string().url().optional(),
   },
   clientPrefix: 'NEXT_PUBLIC_',
   client: {},

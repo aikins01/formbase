@@ -1,8 +1,12 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+import type { ApiV1Context } from '@formbase/api/routers/api-v1';
+import type { NextRequest } from 'next/server';
+
 import { createOpenApiFetchHandler } from 'trpc-to-openapi';
 
-import { apiV1Router, createApiV1Context, type ApiV1Context } from '@formbase/api/routers/api-v1';
 import { logApiRequest } from '@formbase/api';
+import { apiV1Router, createApiV1Context } from '@formbase/api/routers/api-v1';
 import { db } from '@formbase/db';
 
 export const dynamic = 'force-dynamic';
@@ -74,7 +78,10 @@ const handler = async (req: NextRequest) => {
       method: req.method,
       path: new URL(req.url).pathname,
       statusCode: response.status,
-      ipAddress: req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? undefined,
+      ipAddress:
+        req.headers.get('x-forwarded-for') ??
+        req.headers.get('x-real-ip') ??
+        undefined,
       userAgent: req.headers.get('user-agent') ?? undefined,
       responseTimeMs: responseTime,
     }).catch(() => {});

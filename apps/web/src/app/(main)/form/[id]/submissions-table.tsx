@@ -108,16 +108,13 @@ export function SubmissionsTable({
       {
         onSuccess: () => {
           router.refresh();
-          toast.success(
-            isSpam ? 'Marked as spam' : 'Marked as not spam',
-            {
-              icon: isSpam ? (
-                <AlertTriangle className="h-4 w-4" />
-              ) : (
-                <CheckCircle className="h-4 w-4" />
-              ),
-            },
-          );
+          toast.success(isSpam ? 'Marked as spam' : 'Marked as not spam', {
+            icon: isSpam ? (
+              <AlertTriangle className="h-4 w-4" />
+            ) : (
+              <CheckCircle className="h-4 w-4" />
+            ),
+          });
         },
       },
     );
@@ -264,10 +261,7 @@ export function SubmissionsTable({
       accessorKey: 'isSpam',
       header: () => {
         return (
-          <Button
-            variant="ghost"
-            className="px-0 py-0 hover:bg-transparent"
-          >
+          <Button variant="ghost" className="px-0 py-0 hover:bg-transparent">
             Status
           </Button>
         );

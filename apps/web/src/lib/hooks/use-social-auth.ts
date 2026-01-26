@@ -12,10 +12,8 @@ interface UseSocialAuthOptions {
 }
 
 export function useSocialAuth(options: UseSocialAuthOptions = {}) {
-  const {
-    callbackURL = '/dashboard',
-    newUserCallbackURL = '/onboarding',
-  } = options;
+  const { callbackURL = '/dashboard', newUserCallbackURL = '/onboarding' } =
+    options;
 
   const [loading, setLoading] = useState<SocialProvider | null>(null);
   const [error, setError] = useState<string | null>(null);

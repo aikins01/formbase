@@ -1,3 +1,5 @@
+import type { TestForm, TestSession, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -5,9 +7,6 @@ import {
   createTestForm,
   createTestSession,
   createTestUser,
-  type TestForm,
-  type TestSession,
-  type TestUser,
 } from '../helpers';
 
 describe('FormData API', () => {

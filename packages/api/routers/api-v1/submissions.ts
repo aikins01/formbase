@@ -28,7 +28,8 @@ export const submissionsRouter = createApiV1Router({
         path: '/forms/{formId}/submissions',
         tags: ['Submissions'],
         summary: 'List submissions for a form',
-        description: 'Returns a paginated list of submissions with optional date and spam filtering.',
+        description:
+          'Returns a paginated list of submissions with optional date and spam filtering.',
       },
     })
     .input(
@@ -51,7 +52,9 @@ export const submissionsRouter = createApiV1Router({
       const whereConditions = [eq(formDatas.formId, input.formId)];
 
       if (input.startDate) {
-        whereConditions.push(gte(formDatas.createdAt, new Date(input.startDate)));
+        whereConditions.push(
+          gte(formDatas.createdAt, new Date(input.startDate)),
+        );
       }
       if (input.endDate) {
         const endDate = new Date(input.endDate);
@@ -71,10 +74,7 @@ export const submissionsRouter = createApiV1Router({
           limit: input.perPage,
           orderBy: (table, { desc }) => desc(table.createdAt),
         }),
-        ctx.db
-          .select({ count: count() })
-          .from(formDatas)
-          .where(whereClause),
+        ctx.db.select({ count: count() }).from(formDatas).where(whereClause),
       ]);
 
       const total = totalResult[0]?.count ?? 0;
@@ -178,10 +178,7 @@ export const submissionsRouter = createApiV1Router({
 
       const submissions = await ctx.db.query.formDatas.findMany({
         where: (table) =>
-          and(
-            inArray(table.id, input.ids),
-            eq(table.formId, input.formId),
-          ),
+          and(inArray(table.id, input.ids), eq(table.formId, input.formId)),
       });
 
       const foundIds = submissions.map((s) => s.id);

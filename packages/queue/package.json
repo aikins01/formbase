@@ -1,0 +1,29 @@
+{
+  "name": "@formbase/queue",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./connection": "./connection.ts",
+    "./workers/webhook": "./workers/webhook.ts"
+  },
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "lint": "eslint . --cache --max-warnings 0",
+    "typecheck": "tsc --noEmit --tsBuildInfoFile .tsbuildinfo"
+  },
+  "dependencies": {
+    "@formbase/db": "workspace:*",
+    "@formbase/env": "workspace:*",
+    "@formbase/utils": "workspace:*",
+    "bullmq": "^5.34.8",
+    "drizzle-orm": "^0.30.10",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "@formbase/tsconfig": "workspace:*",
+    "eslint-config-formbase": "workspace:*"
+  }
+}

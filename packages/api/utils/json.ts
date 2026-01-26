@@ -11,9 +11,7 @@ export function parseJsonArray(value: string): string[] {
   return Array.isArray(parsed) ? (parsed as string[]) : [];
 }
 
-export function parseJsonObject(
-  value: string,
-): Record<string, unknown> | null {
+export function parseJsonObject(value: string): Record<string, unknown> | null {
   return safeParseJson<Record<string, unknown> | null>(value, null);
 }
 

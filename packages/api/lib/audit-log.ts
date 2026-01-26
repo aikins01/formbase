@@ -38,7 +38,13 @@ function sanitizeRequestBody(body: unknown): string | null {
   if (typeof body !== 'object') return JSON.stringify(body);
 
   const sanitized = { ...(body as Record<string, unknown>) };
-  const sensitiveKeys = ['password', 'token', 'secret', 'apiKey', 'authorization'];
+  const sensitiveKeys = [
+    'password',
+    'token',
+    'secret',
+    'apiKey',
+    'authorization',
+  ];
 
   for (const key of sensitiveKeys) {
     if (key in sanitized) {
@@ -51,5 +57,7 @@ function sanitizeRequestBody(body: unknown): string | null {
 
 export async function cleanupOldAuditLogs(db: Database) {
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-  await db.delete(apiAuditLogs).where(drizzlePrimitives.lt(apiAuditLogs.createdAt, ninetyDaysAgo));
+  await db
+    .delete(apiAuditLogs)
+    .where(drizzlePrimitives.lt(apiAuditLogs.createdAt, ninetyDaysAgo));
 }

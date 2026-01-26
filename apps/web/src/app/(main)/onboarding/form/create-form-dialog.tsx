@@ -18,8 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@formbase/ui/primitives/dialog';
-
-import { LoadingButton } from '~/components/loading-button';
 import {
   Form,
   FormControl,
@@ -35,6 +33,7 @@ import {
   TooltipTrigger,
 } from '@formbase/ui/primitives/tooltip';
 
+import { LoadingButton } from '~/components/loading-button';
 import { api } from '~/lib/trpc/react';
 
 const FormSchema = z.object({

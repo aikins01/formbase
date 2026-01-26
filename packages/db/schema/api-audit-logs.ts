@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 import { apiKeys } from './api-keys';
 

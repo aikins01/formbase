@@ -104,17 +104,12 @@
       "indexes": {
         "account_userId_idx": {
           "name": "account_userId_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "account_provider_account_idx": {
           "name": "account_provider_account_idx",
-          "columns": [
-            "provider_id",
-            "account_id"
-          ],
+          "columns": ["provider_id", "account_id"],
           "isUnique": true
         }
       },
@@ -123,12 +118,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -172,16 +163,12 @@
       "indexes": {
         "form_idx": {
           "name": "form_idx",
-          "columns": [
-            "form_id"
-          ],
+          "columns": ["form_id"],
           "isUnique": false
         },
         "form_data_created_at_idx": {
           "name": "form_data_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -190,12 +177,8 @@
           "name": "form_datas_form_id_forms_id_fk",
           "tableFrom": "form_datas",
           "tableTo": "forms",
-          "columnsFrom": [
-            "form_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["form_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -298,16 +281,12 @@
       "indexes": {
         "form_user_idx": {
           "name": "form_user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "form_created_at_idx": {
           "name": "form_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -316,12 +295,8 @@
           "name": "forms_user_id_user_id_fk",
           "tableFrom": "forms",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -368,12 +343,8 @@
           "name": "onboarding_forms_user_id_user_id_fk",
           "tableFrom": "onboarding_forms",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -381,12 +352,8 @@
           "name": "onboarding_forms_form_id_forms_id_fk",
           "tableFrom": "onboarding_forms",
           "tableTo": "forms",
-          "columnsFrom": [
-            "form_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["form_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -459,16 +426,12 @@
       "indexes": {
         "session_token_unique": {
           "name": "session_token_unique",
-          "columns": [
-            "token"
-          ],
+          "columns": ["token"],
           "isUnique": true
         },
         "session_userId_idx": {
           "name": "session_userId_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -477,12 +440,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -549,16 +508,12 @@
       "indexes": {
         "user_email_unique": {
           "name": "user_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         },
         "user_email_idx": {
           "name": "user_email_idx",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": false
         }
       },
@@ -617,9 +572,7 @@
       "indexes": {
         "verification_identifier_idx": {
           "name": "verification_identifier_idx",
-          "columns": [
-            "identifier"
-          ],
+          "columns": ["identifier"],
           "isUnique": false
         }
       },

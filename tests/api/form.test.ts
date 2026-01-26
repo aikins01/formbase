@@ -1,11 +1,11 @@
+import type { TestSession, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
   createAuthenticatedCaller,
   createTestSession,
   createTestUser,
-  type TestSession,
-  type TestUser,
 } from '../helpers';
 
 describe('Form API', () => {

@@ -1,8 +1,10 @@
+import type { ApiV1Context } from './trpc';
+
 import { initTRPC } from '@trpc/server';
 
 import { formsRouter } from './forms';
 import { submissionsRouter } from './submissions';
-import { createApiV1Router, type ApiV1Context } from './trpc';
+import { createApiV1Router } from './trpc';
 
 export const apiV1Router = createApiV1Router({
   forms: formsRouter,

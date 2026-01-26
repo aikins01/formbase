@@ -20,7 +20,7 @@ const nextConfig = {
     '@formbase/env',
     '@formbase/ui',
     '@formbase/utils',
-    "@formbase/tailwind",
+    '@formbase/tailwind',
   ],
   serverExternalPackages: ['libsql', '@libsql/client'],
   typescript: {

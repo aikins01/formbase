@@ -53,7 +53,7 @@ export const Typography: FC<PropsWithChildren<TypographyProps>> = ({
       ? 'div'
       : variant === 'lead' || variant === 'muted'
         ? 'p'
-        : variant ?? 'p';
+        : (variant ?? 'p');
 
   return (
     <Component className={cn(typographyStyles({ variant }), className)}>

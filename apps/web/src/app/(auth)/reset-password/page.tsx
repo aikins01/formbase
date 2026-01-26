@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import { getSession } from '@formbase/auth/server';
 
 import { Logo } from '../_components/logo';
-
 import { SendResetEmail } from './send-reset-email';
 
 export const metadata = {

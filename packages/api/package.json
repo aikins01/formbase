@@ -11,6 +11,7 @@
     "@formbase/auth": "workspace:*",
     "@formbase/db": "workspace:*",
     "@formbase/env": "workspace:*",
+    "@formbase/queue": "workspace:*",
     "@formbase/utils": "workspace:*",
     "@trpc/server": "next",
     "superjson": "^2.2.1",

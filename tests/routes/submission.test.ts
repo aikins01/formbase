@@ -1,3 +1,5 @@
+import type { TestForm, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -5,8 +7,6 @@ import {
   createTestUser,
   createUnauthenticatedCaller,
   getTestDb,
-  type TestForm,
-  type TestUser,
 } from '../helpers';
 
 describe('Public Submission (formData.setFormData)', () => {

@@ -1,3 +1,5 @@
+import type { TestSession, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -5,8 +7,6 @@ import {
   createTestSession,
   createTestUser,
   getTestDb,
-  type TestSession,
-  type TestUser,
 } from '../helpers';
 
 describe('User API', () => {

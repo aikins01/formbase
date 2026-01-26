@@ -1,8 +1,9 @@
-import { initTRPC, TRPCError } from '@trpc/server';
+import type { User } from '@formbase/db/schema';
 import type { OpenApiMeta } from 'trpc-to-openapi';
+
+import { initTRPC, TRPCError } from '@trpc/server';
 import { ZodError } from 'zod';
 
-import type { User } from '@formbase/db/schema';
 import { db } from '@formbase/db';
 
 import { validateApiKey } from '../../middleware/api-auth';

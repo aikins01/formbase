@@ -44,7 +44,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@formbase/ui/primitives/popover';
-
 import { cn } from '@formbase/ui/utils/cn';
 
 import { CopyButton } from '~/components/copy-button';
@@ -278,7 +277,9 @@ interface ApiKeyRowProps {
 
 function ApiKeyRow({ apiKey, onDelete }: ApiKeyRowProps) {
   const isExpired = apiKey.expiresAt && new Date(apiKey.expiresAt) < new Date();
-  const { data: usageStats } = api.apiKeys.getUsageStats.useQuery({ id: apiKey.id });
+  const { data: usageStats } = api.apiKeys.getUsageStats.useQuery({
+    id: apiKey.id,
+  });
 
   return (
     <div className="flex items-center justify-between p-4">
@@ -295,7 +296,9 @@ function ApiKeyRow({ apiKey, onDelete }: ApiKeyRowProps) {
           <code className="rounded bg-muted px-1.5 py-0.5">
             {apiKey.keyPrefix}...
           </code>
-          <span>Created {format(new Date(apiKey.createdAt), 'MMM d, yyyy')}</span>
+          <span>
+            Created {format(new Date(apiKey.createdAt), 'MMM d, yyyy')}
+          </span>
           {apiKey.lastUsedAt && (
             <span>
               Last used {format(new Date(apiKey.lastUsedAt), 'MMM d, yyyy')}

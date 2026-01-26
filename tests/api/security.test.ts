@@ -1,3 +1,5 @@
+import type { TestForm, TestFormData, TestSession, TestUser } from '../helpers';
+
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -7,10 +9,6 @@ import {
   createTestSession,
   createTestUser,
   createUnauthenticatedCaller,
-  type TestForm,
-  type TestFormData,
-  type TestSession,
-  type TestUser,
 } from '../helpers';
 
 describe('Security Matrix', () => {
@@ -75,7 +73,7 @@ describe('Security Matrix', () => {
       await expect(callerB.form.delete({ id: formA.id })).rejects.toThrow();
     });
 
-    it("User B form list does not include User A forms", async () => {
+    it('User B form list does not include User A forms', async () => {
       const formB = await createTestForm({
         userId: userB.id,
         title: 'User B Form',
@@ -124,9 +122,9 @@ describe('Security Matrix', () => {
     });
 
     it('form.get requires authentication', async () => {
-      await expect(
-        unauthCaller.form.get({ formId: formA.id }),
-      ).rejects.toThrow('UNAUTHORIZED');
+      await expect(unauthCaller.form.get({ formId: formA.id })).rejects.toThrow(
+        'UNAUTHORIZED',
+      );
     });
 
     it('form.update requires authentication', async () => {
@@ -136,9 +134,9 @@ describe('Security Matrix', () => {
     });
 
     it('form.delete requires authentication', async () => {
-      await expect(
-        unauthCaller.form.delete({ id: formA.id }),
-      ).rejects.toThrow('UNAUTHORIZED');
+      await expect(unauthCaller.form.delete({ id: formA.id })).rejects.toThrow(
+        'UNAUTHORIZED',
+      );
     });
 
     it('form.list requires authentication', async () => {

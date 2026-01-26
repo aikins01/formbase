@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import { Logo } from '../../_components/logo';
-
 import { ResetPassword } from './reset-password';
 
 export const metadata = {

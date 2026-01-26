@@ -1,5 +1,5 @@
-import { db } from '@formbase/db';
 import { cleanupOldAuditLogs } from '@formbase/api/lib/audit-log';
+import { db } from '@formbase/db';
 
 export const dynamic = 'force-dynamic';
 

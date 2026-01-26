@@ -1,7 +1,9 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+
+import type { FormEvent } from 'react';
 
 import { toast } from 'sonner';
 
@@ -46,10 +48,7 @@ export function SendResetEmail() {
   return (
     <form className="mt-8 space-y-4" onSubmit={handleResetRequest}>
       <div>
-        <Label
-          htmlFor="email"
-          className="text-sm font-medium text-foreground"
-        >
+        <Label htmlFor="email" className="text-sm font-medium text-foreground">
           Email
         </Label>
         <Input

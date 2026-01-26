@@ -26,6 +26,16 @@ services:
     entrypoint: sh
     command: -c 'mkdir -p /data/formbase && minio server /data --console-address ":9001" --address ":9002"'
 
+  redis:
+    image: redis:7-alpine
+    container_name: formbase-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    command: redis-server --appendonly yes
+
 volumes:
   formbase-mail:
   minio:
+  redis:

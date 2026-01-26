@@ -32,7 +32,9 @@ export function checkRateLimit(keyId: string): RateLimitResult {
   const resetAt = new Date(entry.windowStart + WINDOW_MS);
 
   if (entry.count >= MAX_REQUESTS) {
-    const retryAfterSeconds = Math.ceil((entry.windowStart + WINDOW_MS - now) / 1000);
+    const retryAfterSeconds = Math.ceil(
+      (entry.windowStart + WINDOW_MS - now) / 1000,
+    );
     return {
       allowed: false,
       remaining: 0,

@@ -70,13 +70,14 @@ const baselineMigrations = async () => {
     sql`INSERT INTO ${sql.identifier(migrationsTable)} ("hash", "created_at") VALUES (${latest.hash}, ${latest.folderMillis})`,
   );
 
-  console.warn(
-    'Migrations were baselined to match the current schema.',
-  );
+  console.warn('Migrations were baselined to match the current schema.');
 };
 
 let baselined = false;
-if ((await getLastMigrationTimestamp()) === null && (await hasAnySchemaTable())) {
+if (
+  (await getLastMigrationTimestamp()) === null &&
+  (await hasAnySchemaTable())
+) {
   await baselineMigrations();
   baselined = true;
 }

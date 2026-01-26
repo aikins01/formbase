@@ -31,9 +31,7 @@ export function UserAvatar({
 
   return (
     <Avatar size={size} className={className}>
-      {hasImage ? (
-        <AvatarImage src={src} alt="Avatar" />
-      ) : null}
+      {hasImage ? <AvatarImage src={src} alt="Avatar" /> : null}
       <AvatarFallback>
         <Avvvatars value={seed} size={sizeMap[size]} />
       </AvatarFallback>

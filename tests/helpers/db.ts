@@ -1,5 +1,8 @@
-import { createClient, type Client } from '@libsql/client';
-import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { Client } from '@libsql/client';
+import type { LibSQLDatabase } from 'drizzle-orm/libsql';
+
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 
 import * as schema from '@formbase/db/schema';
 

@@ -1,6 +1,11 @@
 import { getSession } from '@formbase/auth/server';
 import { type FormData } from '@formbase/db/schema';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@formbase/ui/primitives/tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@formbase/ui/primitives/tabs';
 
 import { CopyButton } from '~/components/copy-button';
 import { api } from '~/lib/trpc/server';

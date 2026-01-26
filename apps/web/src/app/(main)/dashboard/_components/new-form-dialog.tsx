@@ -10,8 +10,6 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@formbase/ui/primitives/button';
-
-import { LoadingButton } from '~/components/loading-button';
 import {
   Dialog,
   DialogContent,
@@ -35,6 +33,7 @@ import {
   TooltipTrigger,
 } from '@formbase/ui/primitives/tooltip';
 
+import { LoadingButton } from '~/components/loading-button';
 import { api } from '~/lib/trpc/react';
 
 const FormSchema = z.object({

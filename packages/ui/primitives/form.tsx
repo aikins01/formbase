@@ -97,10 +97,7 @@ function FormLabel({
   );
 }
 
-function FormControl({
-  render,
-  ...props
-}: useRender.ComponentProps<'div'>) {
+function FormControl({ render, ...props }: useRender.ComponentProps<'div'>) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 

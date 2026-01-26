@@ -1,12 +1,14 @@
-import { env } from "@formbase/env";
-import { userAgent } from "next/server";
+import { userAgent } from 'next/server';
 
-import { sendMail } from "~/lib/email/mailer";
-import { renderNewSubmissionEmail } from "~/lib/email/templates/new-submission";
-import { checkForSpam, stripHoneypotField } from "~/lib/spam-detection";
-import { api } from "~/lib/trpc/server";
-import { assignFileOrImage, uploadFileFromBlob } from "~/lib/upload-file";
-import { type RouterOutputs } from "@formbase/api";
+import { type RouterOutputs } from '@formbase/api';
+import { env } from '@formbase/env';
+import { enqueueWebhook } from '@formbase/queue';
+
+import { sendMail } from '~/lib/email/mailer';
+import { renderNewSubmissionEmail } from '~/lib/email/templates/new-submission';
+import { checkForSpam, stripHoneypotField } from '~/lib/spam-detection';
+import { api } from '~/lib/trpc/server';
+import { assignFileOrImage, uploadFileFromBlob } from '~/lib/upload-file';
 
 type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
@@ -30,7 +32,10 @@ const CORS_HEADERS = {
 async function getFormData(request: Request): Promise<FormDataResult> {
   const contentType = request.headers.get('content-type') ?? '';
 
-  if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
+  if (
+    contentType.includes('multipart/form-data') ||
+    contentType.includes('application/x-www-form-urlencoded')
+  ) {
     try {
       const rawFormData = await request.formData();
       const data: Record<string, Blob | string | undefined> = {};
@@ -122,14 +127,20 @@ export async function POST(
     }
 
     const honeypotField = form.honeypotField;
-    const spamResult = checkForSpam(formData as Record<string, unknown>, honeypotField);
-    const cleanedFormData = stripHoneypotField(formData as Record<string, unknown>, honeypotField);
+    const spamResult = checkForSpam(
+      formData as Record<string, unknown>,
+      honeypotField,
+    );
+    const cleanedFormData = stripHoneypotField(
+      formData as Record<string, unknown>,
+      honeypotField,
+    );
 
     const formDataKeys = Object.keys(cleanedFormData);
     const formKeys = form.keys;
     const updatedKeys = [...new Set([...formKeys, ...formDataKeys])];
 
-    await api.formData.setFormData({
+    const { id: formDataId } = await api.formData.setFormData({
       data: cleanedFormData as Json,
       formId,
       keys: updatedKeys,
@@ -139,6 +150,10 @@ export async function POST(
 
     if (!spamResult.isSpam) {
       void handleEmailNotifications(form, cleanedFormData);
+    }
+
+    if (form.enableWebhook && form.webhookUrl) {
+      void enqueueWebhook(formId, formDataId, form.webhookUrl);
     }
     const { browser } = userAgent(request);
 

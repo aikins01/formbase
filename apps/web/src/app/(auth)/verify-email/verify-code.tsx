@@ -37,7 +37,9 @@ export const VerifyEmail = ({ email }: { email?: string | null }) => {
       })
       .catch(() => {
         toast('Unable to verify email. Please try again.', {
-          icon: <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />,
+          icon: (
+            <ExclamationTriangleIcon className="h-5 w-5 text-destructive" />
+          ),
         });
       });
   }, [token, router]);

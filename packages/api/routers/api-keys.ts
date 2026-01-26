@@ -50,7 +50,10 @@ export const apiKeysRouter = createRouter({
       });
 
       if (!apiKey) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'API key not found' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'API key not found',
+        });
       }
 
       await ctx.db.delete(apiKeys).where(eq(apiKeys.id, input.id));
@@ -65,7 +68,10 @@ export const apiKeysRouter = createRouter({
       });
 
       if (!apiKey) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'API key not found' });
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'API key not found',
+        });
       }
 
       const now = new Date();

@@ -1,3 +1,4 @@
+import themer from '@tailus/themer';
 import aspectRatio from '@tailwindcss/aspect-ratio';
 import containerQueries from '@tailwindcss/container-queries';
 import forms from '@tailwindcss/forms';
@@ -6,7 +7,6 @@ import animate from 'tailwindcss-animate';
 import plugin from 'tailwindcss/plugin';
 
 import { type Config } from 'tailwindcss';
-import themer from '@tailus/themer';
 
 // Default sans-serif font stack (previously from tailwindcss/defaultTheme)
 const defaultSansFonts = [
@@ -131,16 +131,16 @@ export const tailwindPreset: Config = {
       handler: containerQueries.handler,
     },
     themer({
-        radius: 'smoothest',
-        background: 'lighter',
-        border: 'light',
-        padding: 'large',
-        components: {
-          button: {
-            rounded: '2xl',
-          },
+      radius: 'smoothest',
+      background: 'lighter',
+      border: 'light',
+      padding: 'large',
+      components: {
+        button: {
+          rounded: '2xl',
         },
-      }),
+      },
+    }),
     // Base UI data attribute variants
     plugin(function ({ addVariant }) {
       // Base UI state variants
@@ -166,7 +166,10 @@ export const tailwindPreset: Config = {
       addVariant('in-data-closed', ':not([data-open]) &');
 
       // Supports backdrop filter
-      addVariant('supports-backdrop-filter', '@supports (backdrop-filter: blur(0))');
+      addVariant(
+        'supports-backdrop-filter',
+        '@supports (backdrop-filter: blur(0))',
+      );
     }),
   ],
 };

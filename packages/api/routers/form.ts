@@ -1,11 +1,14 @@
-import { drizzlePrimitives } from "@formbase/db";
-import { formDatas, forms, onboardingForms } from "@formbase/db/schema";
-import { generateId } from "@formbase/utils/generate-id";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { parseJsonArray, serializeJson } from "../utils/json";
-import { assertFormOwnership } from "./form-ownership";
+import { drizzlePrimitives } from '@formbase/db';
+import { formDatas, forms, onboardingForms } from '@formbase/db/schema';
+import { createTestWebhookJob } from '@formbase/queue';
+import { generateId } from '@formbase/utils/generate-id';
+
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
+import { parseJsonArray, serializeJson } from '../utils/json';
+import { assertFormOwnership } from './form-ownership';
 
 const { and, count, eq } = drizzlePrimitives;
 
@@ -127,6 +130,34 @@ export const formRouter = createTRPCRouter({
         returnUrl: z.string().optional(),
         defaultSubmissionEmail: z.string().optional(),
         honeypotField: z.string().optional(),
+        enableWebhook: z.boolean().optional(),
+        webhookUrl: z
+          .string()
+          .url()
+          .refine(
+            (url) => {
+              try {
+                const parsed = new URL(url);
+                if (parsed.protocol === 'https:') return true;
+                if (
+                  parsed.protocol === 'http:' &&
+                  (parsed.hostname === 'localhost' ||
+                    parsed.hostname === '127.0.0.1')
+                ) {
+                  return true;
+                }
+                return false;
+              } catch {
+                return false;
+              }
+            },
+            {
+              message:
+                'Webhook URL must use HTTPS (localhost allowed for development)',
+            },
+          )
+          .optional()
+          .nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -145,6 +176,9 @@ export const formRouter = createTRPCRouter({
           defaultSubmissionEmail:
             input.defaultSubmissionEmail ?? form.defaultSubmissionEmail,
           honeypotField: input.honeypotField ?? form.honeypotField,
+          enableWebhook: input.enableWebhook ?? form.enableWebhook,
+          webhookUrl:
+            input.webhookUrl !== undefined ? input.webhookUrl : form.webhookUrl,
         })
         .where(eq(forms.id, input.id));
     }),
@@ -182,6 +216,8 @@ export const formRouter = createTRPCRouter({
         enableSubmissions: existingForm.enableSubmissions,
         defaultSubmissionEmail: existingForm.defaultSubmissionEmail,
         honeypotField: existingForm.honeypotField,
+        enableWebhook: existingForm.enableWebhook,
+        webhookUrl: existingForm.webhookUrl,
       });
 
       return { id: newId };
@@ -253,5 +289,28 @@ export const formRouter = createTRPCRouter({
         ...form,
         keys: parseJsonArray(form.keys),
       };
+    }),
+
+  testWebhook: protectedProcedure
+    .input(z.object({ formId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const form = await assertFormOwnership(ctx, input.formId);
+
+      if (!form.enableWebhook || !form.webhookUrl) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Webhook is not enabled or URL is not configured',
+        });
+      }
+
+      const jobId = await createTestWebhookJob(form.id, form.webhookUrl);
+      if (!jobId) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create test webhook job',
+        });
+      }
+
+      return { jobId };
     }),
 });

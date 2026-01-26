@@ -1,8 +1,8 @@
 import type { InferSelectModel } from 'drizzle-orm';
 
 import { sql } from 'drizzle-orm';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 import { users } from './users';
 
@@ -38,6 +38,10 @@ export const forms = sqliteTable(
       .notNull(),
     defaultSubmissionEmail: text('default_submission_email'),
     honeypotField: text('honeypot_field').default('_gotcha').notNull(),
+    enableWebhook: integer('enable_webhook', { mode: 'boolean' })
+      .default(false)
+      .notNull(),
+    webhookUrl: text('webhook_url'),
   },
   (t) => ({
     userIdx: index('form_user_idx').on(t.userId),
@@ -56,6 +60,8 @@ export const ZUpdateFormSchema = createInsertSchema(forms).pick({
   enableEmailNotifications: true,
   enableRetention: true,
   honeypotField: true,
+  enableWebhook: true,
+  webhookUrl: true,
 });
 
 export type Form = InferSelectModel<typeof forms>;

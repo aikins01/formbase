@@ -1,7 +1,8 @@
 import { getTestDb } from './db';
 
 export async function createApiV1Caller(apiKeyToken?: string) {
-  const { createApiV1CallerFactory } = await import('@formbase/api/routers/api-v1');
+  const { createApiV1CallerFactory } =
+    await import('@formbase/api/routers/api-v1');
 
   const headers = new Headers();
   if (apiKeyToken) {

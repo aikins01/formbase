@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-
 import type { InputProps } from '@formbase/ui/primitives/input';
+
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 import { Input } from '@formbase/ui/primitives/input';
 import { cn } from '@formbase/ui/utils/cn';

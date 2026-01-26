@@ -7,10 +7,7 @@ import { generateId } from '@formbase/utils/generate-id';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import { parseJsonObject, serializeJson } from '../utils/json';
-import {
-  assertFormDataOwnership,
-  assertFormOwnership,
-} from './form-ownership';
+import { assertFormDataOwnership, assertFormOwnership } from './form-ownership';
 
 const { eq } = drizzlePrimitives;
 
@@ -124,10 +121,11 @@ export const formDataRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       return await ctx.db.transaction(async (tx) => {
-        const formdata = await tx.insert(formDatas).values({
+        const id = generateId(15);
+        await tx.insert(formDatas).values({
           data: serializeJson(input.data),
           formId: input.formId,
-          id: generateId(15),
+          id,
           createdAt: new Date(),
           isSpam: input.isSpam,
           spamReason: input.spamReason ?? null,
@@ -141,7 +139,7 @@ export const formDataRouter = createTRPCRouter({
           })
           .where(eq(forms.id, input.formId));
 
-        return formdata;
+        return { id };
       });
     }),
 

@@ -6,13 +6,9 @@ const { and, eq } = drizzlePrimitives;
 
 type DbContext = { db: typeof import('@formbase/db').db; user: { id: string } };
 
-export async function assertApiFormOwnership(
-  ctx: DbContext,
-  formId: string,
-) {
+export async function assertApiFormOwnership(ctx: DbContext, formId: string) {
   const form = await ctx.db.query.forms.findFirst({
-    where: (table) =>
-      and(eq(table.id, formId), eq(table.userId, ctx.user.id)),
+    where: (table) => and(eq(table.id, formId), eq(table.userId, ctx.user.id)),
   });
 
   if (!form) {
@@ -33,8 +29,7 @@ export async function assertApiSubmissionOwnership(
   await assertApiFormOwnership(ctx, formId);
 
   const submission = await ctx.db.query.formDatas.findFirst({
-    where: (table) =>
-      and(eq(table.id, submissionId), eq(table.formId, formId)),
+    where: (table) => and(eq(table.id, submissionId), eq(table.formId, formId)),
   });
 
   if (!submission) {

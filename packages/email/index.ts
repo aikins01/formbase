@@ -74,7 +74,9 @@ const getTransporter = () => {
     !!env.SMTP_PASS;
 
   if (!hasSmtpConfig) {
-    throw new Error('Email transport not configured. Set SMTP_TRANSPORT to resend or smtp.');
+    throw new Error(
+      'Email transport not configured. Set SMTP_TRANSPORT to resend or smtp.',
+    );
   }
 
   cachedTransporter = createSmtpTransport();
@@ -91,4 +93,3 @@ export const sendMail = async ({ to, subject, body }: MessageInfo) => {
   };
   return transporter.sendMail(mailOptions);
 };
-

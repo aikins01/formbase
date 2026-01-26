@@ -8,9 +8,7 @@ import { EmptyFormState } from './empty-state';
 import { FormCard } from './form-card';
 
 interface FormsProps {
-  promises: Promise<
-    [RouterOutputs['form']['userForms']]
-  >;
+  promises: Promise<[RouterOutputs['form']['userForms']]>;
 }
 
 export function Forms({ promises }: FormsProps) {
