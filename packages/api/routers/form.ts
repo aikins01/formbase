@@ -212,15 +212,14 @@ export const formRouter = createTRPCRouter({
       }),
     ),
 
-  hasReturningUrl: protectedProcedure
-    .input(
-      z.object({
-        formId: z.string(),
-      }),
-    )
+  getReturnUrl: publicProcedure
+    .input(z.object({ formId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const form = await assertFormOwnership(ctx, input.formId);
-      return { returnUrl: form.returnUrl };
+      const form = await ctx.db.query.forms.findFirst({
+        where: (table) => eq(table.id, input.formId),
+        columns: { returnUrl: true },
+      });
+      return { returnUrl: form?.returnUrl ?? null };
     }),
 
   formSubmissions: protectedProcedure
