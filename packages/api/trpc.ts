@@ -2,11 +2,11 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
-import { auth } from '@formbase/auth';
+import { getSession } from '@formbase/auth/server';
 import { db } from '@formbase/db';
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth.api.getSession({ headers: opts.headers });
+  const session = await getSession();
   const user = session?.user ?? null;
 
   return {
