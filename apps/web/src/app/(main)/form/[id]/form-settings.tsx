@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { type RouterOutputs } from '@formbase/api';
+import { isValidWebhookUrl } from '@formbase/utils/webhook';
 import { type User } from '@formbase/auth';
 import {
   Form,
@@ -65,7 +66,14 @@ const honeypotFieldSchema = z.object({
 
 const webhookSettingsSchema = z.object({
   enableWebhook: z.boolean().default(false).optional(),
-  webhookUrl: z.string().url().optional().or(z.literal('')),
+  webhookUrl: z
+    .string()
+    .url()
+    .refine(isValidWebhookUrl, {
+      message: 'URL must use HTTPS (localhost allowed for development)',
+    })
+    .optional()
+    .or(z.literal('')),
 });
 
 type FormNameSchema = z.infer<typeof formNameSchema>;

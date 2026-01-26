@@ -5,26 +5,13 @@ import { eq } from 'drizzle-orm';
 import { db } from '@formbase/db';
 import { formDatas, forms, webhookDeliveryLogs } from '@formbase/db/schema';
 import { generateId } from '@formbase/utils/generate-id';
+import { isValidWebhookUrl } from '@formbase/utils/webhook';
 
 import { getWebhookQueue } from '../queues/webhook';
 
 const WEBHOOK_TIMEOUT_MS = 30_000;
 
-export function validateWebhookUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol === 'https:') return true;
-    if (
-      parsed.protocol === 'http:' &&
-      (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1')
-    ) {
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
-  }
-}
+export { isValidWebhookUrl as validateWebhookUrl };
 
 function extractFileUrls(data: Record<string, unknown>): string[] {
   const urls: string[] = [];
@@ -145,6 +132,29 @@ export async function deliverWebhook(data: WebhookJobData): Promise<{
   }
 }
 
+function buildMockPayload(
+  formId: string,
+  formTitle: string,
+): WebhookJobData['payload'] {
+  return {
+    event: 'submission.created',
+    payload: {
+      id: 'test-submission-id',
+      formId,
+      formTitle,
+      data: {
+        name: 'Test User',
+        email: 'test@example.com',
+        message: 'This is a test submission',
+      },
+      fileUrls: [],
+      isSpam: false,
+      spamReason: null,
+      createdAt: new Date().toISOString(),
+    },
+  };
+}
+
 export async function createTestWebhookJob(
   formId: string,
   webhookUrl: string,
@@ -159,53 +169,22 @@ export async function createTestWebhookJob(
   const lastSubmission = await db.query.formDatas.findFirst({
     where: eq(formDatas.formId, formId),
     orderBy: (table, { desc }) => desc(table.createdAt),
-    columns: {
-      id: true,
-      data: true,
-      isSpam: true,
-      spamReason: true,
-      createdAt: true,
-    },
+    columns: { id: true },
   });
 
   let payload: WebhookJobData['payload'];
+  let formDataId: string | null = null;
 
   if (lastSubmission) {
-    const parsedData = JSON.parse(lastSubmission.data) as Record<
-      string,
-      unknown
-    >;
-    payload = {
-      event: 'submission.created',
-      payload: {
-        id: lastSubmission.id,
-        formId: form.id,
-        formTitle: form.title,
-        data: parsedData,
-        fileUrls: extractFileUrls(parsedData),
-        isSpam: lastSubmission.isSpam,
-        spamReason: lastSubmission.spamReason,
-        createdAt: lastSubmission.createdAt.toISOString(),
-      },
-    };
+    const built = await buildWebhookPayload(formId, lastSubmission.id);
+    if (built) {
+      payload = built;
+      formDataId = lastSubmission.id;
+    } else {
+      payload = buildMockPayload(form.id, form.title);
+    }
   } else {
-    payload = {
-      event: 'submission.created',
-      payload: {
-        id: 'test-submission-id',
-        formId: form.id,
-        formTitle: form.title,
-        data: {
-          name: 'Test User',
-          email: 'test@example.com',
-          message: 'This is a test submission',
-        },
-        fileUrls: [],
-        isSpam: false,
-        spamReason: null,
-        createdAt: new Date().toISOString(),
-      },
-    };
+    payload = buildMockPayload(form.id, form.title);
   }
 
   const logId = generateId(15);
@@ -213,7 +192,7 @@ export async function createTestWebhookJob(
   await db.insert(webhookDeliveryLogs).values({
     id: logId,
     formId,
-    formDataId: lastSubmission?.id ?? null,
+    formDataId,
     webhookUrl,
     payload: JSON.stringify(payload),
     status: 'pending',
@@ -225,7 +204,7 @@ export async function createTestWebhookJob(
     'deliver',
     {
       formId,
-      formDataId: lastSubmission?.id ?? 'test',
+      formDataId: formDataId ?? 'test',
       webhookUrl,
       payload,
       deliveryLogId: logId,

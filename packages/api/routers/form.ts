@@ -5,6 +5,7 @@ import { drizzlePrimitives } from '@formbase/db';
 import { formDatas, forms, onboardingForms } from '@formbase/db/schema';
 import { createTestWebhookJob } from '@formbase/queue';
 import { generateId } from '@formbase/utils/generate-id';
+import { isValidWebhookUrl } from '@formbase/utils/webhook';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import { parseJsonArray, serializeJson } from '../utils/json';
@@ -134,28 +135,10 @@ export const formRouter = createTRPCRouter({
         webhookUrl: z
           .string()
           .url()
-          .refine(
-            (url) => {
-              try {
-                const parsed = new URL(url);
-                if (parsed.protocol === 'https:') return true;
-                if (
-                  parsed.protocol === 'http:' &&
-                  (parsed.hostname === 'localhost' ||
-                    parsed.hostname === '127.0.0.1')
-                ) {
-                  return true;
-                }
-                return false;
-              } catch {
-                return false;
-              }
-            },
-            {
-              message:
-                'Webhook URL must use HTTPS (localhost allowed for development)',
-            },
-          )
+          .refine(isValidWebhookUrl, {
+            message:
+              'Webhook URL must use HTTPS (localhost allowed for development)',
+          })
           .optional()
           .nullable(),
       }),
