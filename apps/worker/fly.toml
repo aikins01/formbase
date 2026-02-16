@@ -1,0 +1,10 @@
+app = "formbase-worker"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+# No HTTP services - background worker only
