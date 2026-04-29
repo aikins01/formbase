@@ -8,7 +8,8 @@ export default defineConfig({
   workers: 1,
   reporter: [['html', { open: 'never' }], ['list']],
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
+    baseURL:
+      process.env.E2E_BASE_URL ?? process.env.BASE_URL ?? 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on',
@@ -23,8 +24,8 @@ export default defineConfig({
   webServer: process.env.CI
     ? undefined
     : {
-        command: 'bun run dev --filter=web',
-        url: 'http://localhost:3000',
+        command: 'bun run dev --filter=@formbase/web',
+        url: 'http://localhost:3000/login',
         reuseExistingServer: !process.env.CI,
         timeout: 120000,
         cwd: '..',

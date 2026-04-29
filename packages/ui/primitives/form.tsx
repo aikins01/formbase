@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form';
 
-import { useRender } from '@base-ui/react/use-render';
 import { Controller, FormProvider, useFormContext } from 'react-hook-form';
 
 import { Label } from '../primitives/label';
@@ -97,23 +96,21 @@ function FormLabel({
   );
 }
 
-function FormControl({
-  render,
-  ...props
-}: useRender.ComponentProps<'div'>) {
+type FormControlProps = React.HTMLAttributes<HTMLElement> & {
+  children: React.ReactElement<React.HTMLAttributes<HTMLElement>>;
+};
+
+function FormControl({ children, ...props }: FormControlProps) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 
-  return useRender({
-    render,
-    props: {
-      id: formItemId,
-      'aria-describedby': !error
-        ? formDescriptionId
-        : `${formDescriptionId} ${formMessageId}`,
-      'aria-invalid': !!error,
-      ...props,
-    },
+  return React.cloneElement(children, {
+    ...props,
+    id: formItemId,
+    'aria-describedby': !error
+      ? formDescriptionId
+      : `${formDescriptionId} ${formMessageId}`,
+    'aria-invalid': !!error,
   });
 }
 

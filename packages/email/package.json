@@ -17,9 +17,8 @@
   },
   "devDependencies": {
     "@formbase/tsconfig": "workspace:*",
-    "@types/node": "^20.12.12",
-    "@types/nodemailer": "^6.4.17",
+    "@types/node": "^20.19.39",
+    "@types/nodemailer": "^6.4.23",
     "eslint-config-formbase": "workspace:*"
   }
 }
-

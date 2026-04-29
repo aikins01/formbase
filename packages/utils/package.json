@@ -16,13 +16,13 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "nanoid": "^5.0.9",
-    "tailwind-merge": "^2.3.0"
+    "nanoid": "^5.1.9",
+    "tailwind-merge": "^2.6.1"
   },
   "devDependencies": {
     "@formbase/env": "workspace:*",
     "@formbase/tsconfig": "workspace:*",
-    "@types/node": "^20.12.12",
+    "@types/node": "^20.19.39",
     "eslint-config-formbase": "workspace:*"
   }
 }

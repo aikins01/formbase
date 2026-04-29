@@ -8,7 +8,7 @@ test.describe('Forms', () => {
     await page.goto('/login');
     await page.getByPlaceholder('email@example.com').fill(E2E_TEST_USER.email);
     await page.getByPlaceholder('********').fill(E2E_TEST_USER.password);
-    await page.getByRole('button', { name: 'Log In', exact: true }).click();
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
     await page.waitForURL(/.*dashboard/, { timeout: 15000 });
   });
 
