@@ -12,14 +12,14 @@
     "@formbase/db": "workspace:*",
     "@formbase/env": "workspace:*",
     "@formbase/utils": "workspace:*",
-    "@trpc/server": "next",
+    "@trpc/server": "^11.17.0",
     "superjson": "^2.2.1",
     "trpc-to-openapi": "^2.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@formbase/tsconfig": "workspace:*",
-    "@types/node": "^20.12.12",
+    "@types/node": "^20.19.39",
     "eslint-config-formbase": "workspace:*"
   }
 }

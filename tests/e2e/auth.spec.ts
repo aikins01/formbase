@@ -8,16 +8,18 @@ test.describe('Authentication', () => {
       await page.goto('/login');
 
       // Check page title and description
-      await expect(page.getByText('Formbase Log In')).toBeVisible();
       await expect(
-        page.getByText('Log in to your account to access your dashboard'),
+        page.getByRole('heading', { name: 'Sign in to your account' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('link', { name: 'Sign up' }),
       ).toBeVisible();
 
       // Check form elements
       await expect(page.getByPlaceholder('email@example.com')).toBeVisible();
       await expect(page.getByPlaceholder('********')).toBeVisible();
       await expect(
-        page.getByRole('button', { name: 'Log In', exact: true }),
+        page.getByRole('button', { name: 'Sign in', exact: true }),
       ).toBeVisible();
     });
 
@@ -28,7 +30,7 @@ test.describe('Authentication', () => {
         .getByPlaceholder('email@example.com')
         .fill('invalid@example.com');
       await page.getByPlaceholder('********').fill('wrongpassword');
-      await page.getByRole('button', { name: 'Log In', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
       // Wait for error message
       await expect(page.getByText(/invalid|error|incorrect/i)).toBeVisible({
@@ -43,7 +45,7 @@ test.describe('Authentication', () => {
         .getByPlaceholder('email@example.com')
         .fill(E2E_TEST_USER.email);
       await page.getByPlaceholder('********').fill(E2E_TEST_USER.password);
-      await page.getByRole('button', { name: 'Log In', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 
       // Should redirect to dashboard
       await page.waitForURL(/.*dashboard/, { timeout: 15000 });
@@ -58,7 +60,7 @@ test.describe('Authentication', () => {
         .getByPlaceholder('email@example.com')
         .fill(E2E_TEST_USER.email);
       await page.getByPlaceholder('********').fill(E2E_TEST_USER.password);
-      await page.getByRole('button', { name: 'Log In', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page.waitForURL(/.*dashboard/, { timeout: 15000 });
 
       // Now try to visit login page again
@@ -77,15 +79,15 @@ test.describe('Authentication', () => {
         .getByPlaceholder('email@example.com')
         .fill(E2E_TEST_USER.email);
       await page.getByPlaceholder('********').fill(E2E_TEST_USER.password);
-      await page.getByRole('button', { name: 'Log In', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page.waitForURL(/.*dashboard/, { timeout: 15000 });
 
       // Open user menu dropdown (avatar button in header showing user initials)
       const userMenuButton = page.locator('header button').last();
       await userMenuButton.click();
 
-      // Click logout in the dropdown menu (it's a button, not menuitem)
-      await page.getByRole('button', { name: /sign\s*out/i }).click();
+      // click sign out in the user menu
+      await page.getByRole('menuitem', { name: /sign\s*out/i }).click();
 
       // Confirm the sign out dialog
       await page.getByRole('button', { name: 'Okay' }).click();
@@ -114,7 +116,7 @@ test.describe('Authentication', () => {
         .getByPlaceholder('email@example.com')
         .fill(E2E_TEST_USER.email);
       await page.getByPlaceholder('********').fill(E2E_TEST_USER.password);
-      await page.getByRole('button', { name: 'Log In', exact: true }).click();
+      await page.getByRole('button', { name: 'Sign in', exact: true }).click();
       await page.waitForURL(/.*dashboard/, { timeout: 15000 });
 
       // Dashboard should show the main heading
