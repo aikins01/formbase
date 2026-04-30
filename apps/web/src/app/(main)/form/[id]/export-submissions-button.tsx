@@ -3,7 +3,7 @@
 import { ArrowDownToLine, FileDown } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { type FormData } from '@formbase/db/schema';
+import { type RouterOutputs } from '@formbase/api';
 import { Button } from '@formbase/ui/primitives/button';
 import {
   DropdownMenu,
@@ -14,15 +14,17 @@ import {
   DropdownMenuTrigger,
 } from '@formbase/ui/primitives/dropdown-menu';
 
+import { formatSubmissionValue } from './format-submission-value';
+
 type ExportSubmissionsDropDownButtonProps = {
-  submissions: FormData[];
+  submissions: Array<RouterOutputs['formData']['all'][number]>;
   formKeys: string[];
   formTitle: string;
   honeypotField: string;
 };
 
 const createCSVContent = (
-  submissions: FormData[],
+  submissions: Array<RouterOutputs['formData']['all'][number]>,
   formKeys: string[],
   honeypotField: string,
 ): string => {
@@ -35,10 +37,10 @@ const createCSVContent = (
 
   submissions.forEach((submission) => {
     if (submission.data && typeof submission.data === 'object') {
-      const dataValues = filteredKeys.map(
-        (key) => (submission.data as Record<string, unknown>)[key] ?? '',
+      const dataValues = filteredKeys.map((key) =>
+        formatSubmissionValue(submission.data?.[key]),
       );
-      const row = [...dataValues, submission.isSpam].join(',');
+      const row = [...dataValues, String(submission.isSpam)].join(',');
       csvContent += row + '\n';
     }
   });
@@ -47,18 +49,20 @@ const createCSVContent = (
 };
 
 const createJSONContent = (
-  submissions: FormData[],
+  submissions: Array<RouterOutputs['formData']['all'][number]>,
   honeypotField: string,
 ): string => {
   const jsonContent = JSON.stringify(
     submissions.map((submission) => {
-      const data =
+      const dataEntries =
         submission.data && typeof submission.data === 'object'
-          ? { ...(submission.data as Record<string, unknown>) }
-          : {};
-      delete data[honeypotField];
+          ? Object.entries(submission.data).filter(
+              ([key]) => key !== honeypotField,
+            )
+          : [];
+
       return {
-        ...data,
+        ...Object.fromEntries(dataEntries),
         isSpam: submission.isSpam,
       };
     }),

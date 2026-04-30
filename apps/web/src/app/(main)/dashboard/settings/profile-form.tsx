@@ -9,8 +9,6 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { type User } from '@formbase/auth';
-
-import { LoadingButton } from '~/components/loading-button';
 import {
   Form,
   FormControl,
@@ -21,6 +19,7 @@ import {
 } from '@formbase/ui/primitives/form';
 import { Input } from '@formbase/ui/primitives/input';
 
+import { LoadingButton } from '~/components/loading-button';
 import { api } from '~/lib/trpc/react';
 
 const profileFormSchema = z.object({
@@ -34,8 +33,10 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
+type ProfileFormUser = Omit<User, 'name'> & { name: string | null };
+
 type ProfileFormProps = {
-  user: User;
+  user: ProfileFormUser;
 };
 
 export function ProfileForm({ user }: ProfileFormProps) {

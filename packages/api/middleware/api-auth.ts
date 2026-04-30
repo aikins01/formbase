@@ -1,17 +1,19 @@
-import type { LibSQLDatabase } from 'drizzle-orm/libsql';
+import type { db as database } from '@formbase/db';
 
 import { drizzlePrimitives } from '@formbase/db';
 import { apiKeys } from '@formbase/db/schema';
 
-const { and, eq, gt, isNull, or } = drizzlePrimitives;
-
 import { hashApiKey } from '../lib/api-key';
 
-type Database = LibSQLDatabase<Record<string, never>>;
+const { and, eq, gt, isNull, or } = drizzlePrimitives;
+
+type Database = typeof database;
+type AfterResponse = (task: () => Promise<void> | void) => void;
 
 export async function validateApiKey(
   authorization: string | null | undefined,
   db: Database,
+  afterResponse?: AfterResponse,
 ) {
   if (!authorization?.startsWith('Bearer ')) {
     return null;
@@ -30,11 +32,19 @@ export async function validateApiKey(
   });
 
   if (apiKey) {
-    db.update(apiKeys)
-      .set({ lastUsedAt: new Date() })
-      .where(eq(apiKeys.id, apiKey.id))
-      .then(() => {})
-      .catch(() => {});
+    const updateLastUsedAt = async () => {
+      await db
+        .update(apiKeys)
+        .set({ lastUsedAt: new Date() })
+        .where(eq(apiKeys.id, apiKey.id))
+        .catch(() => undefined);
+    };
+
+    if (afterResponse) {
+      afterResponse(updateLastUsedAt);
+    } else {
+      void updateLastUsedAt();
+    }
   }
 
   return apiKey;

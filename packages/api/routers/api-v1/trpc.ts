@@ -1,16 +1,20 @@
-import { initTRPC, TRPCError } from '@trpc/server';
+import type { User } from '@formbase/db/schema';
 import type { OpenApiMeta } from 'trpc-to-openapi';
+
+import { initTRPC, TRPCError } from '@trpc/server';
 import { ZodError } from 'zod';
 
-import type { User } from '@formbase/db/schema';
 import { db } from '@formbase/db';
 
 import { validateApiKey } from '../../middleware/api-auth';
 import { checkRateLimit } from '../../middleware/rate-limit';
 
+type AfterResponse = (task: () => Promise<void> | void) => void;
+
 export interface ApiV1Context {
   db: typeof db;
   headers: Headers;
+  afterResponse?: AfterResponse;
   apiKey?: {
     id: string;
     userId: string;
@@ -22,12 +26,14 @@ export interface ApiV1Context {
   retryAfterSeconds?: number;
 }
 
-export const createApiV1Context = async (opts: {
+export const createApiV1Context = (opts: {
   headers: Headers;
-}): Promise<ApiV1Context> => {
+  afterResponse?: AfterResponse;
+}): ApiV1Context => {
   return {
     db,
     headers: opts.headers,
+    ...(opts.afterResponse ? { afterResponse: opts.afterResponse } : {}),
   };
 };
 
@@ -49,11 +55,17 @@ const t = initTRPC
 
 export const createApiV1Router = t.router;
 
+export const createApiV1Caller = t.createCallerFactory;
+
 export const publicApiProcedure = t.procedure;
 
 export const apiKeyProcedure = t.procedure.use(async ({ ctx, next }) => {
   const authorization = ctx.headers.get('authorization');
-  const apiKey = await validateApiKey(authorization, ctx.db);
+  const apiKey = await validateApiKey(
+    authorization,
+    ctx.db,
+    ctx.afterResponse,
+  );
 
   if (!apiKey) {
     throw new TRPCError({
@@ -71,14 +83,21 @@ export const apiKeyProcedure = t.procedure.use(async ({ ctx, next }) => {
     });
   }
 
+  const apiKeyCtx = {
+    id: apiKey.id,
+    userId: apiKey.userId,
+    user: apiKey.user,
+  };
+
+  ctx.apiKey = apiKeyCtx;
+  ctx.user = apiKey.user;
+  ctx.rateLimitRemaining = rateLimit.remaining;
+  ctx.rateLimitReset = rateLimit.resetAt.getTime();
+
   return next({
     ctx: {
       ...ctx,
-      apiKey: {
-        id: apiKey.id,
-        userId: apiKey.userId,
-        user: apiKey.user,
-      },
+      apiKey: apiKeyCtx,
       user: apiKey.user,
       rateLimitRemaining: rateLimit.remaining,
       rateLimitReset: rateLimit.resetAt.getTime(),
