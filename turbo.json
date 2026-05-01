@@ -38,6 +38,8 @@
         "STORAGE_ACCESS_KEY",
         "STORAGE_SECRET_KEY",
         "STORAGE_BUCKET",
+        "STORAGE_REGION",
+        "CRON_SECRET",
         "VERCEL_URL",
         "PORT"
       ],
@@ -70,6 +72,8 @@
         "STORAGE_ACCESS_KEY",
         "STORAGE_SECRET_KEY",
         "STORAGE_BUCKET",
+        "STORAGE_REGION",
+        "CRON_SECRET",
         "VERCEL_URL",
         "PORT"
       ]
@@ -100,6 +104,8 @@
         "STORAGE_ACCESS_KEY",
         "STORAGE_SECRET_KEY",
         "STORAGE_BUCKET",
+        "STORAGE_REGION",
+        "CRON_SECRET",
         "VERCEL_URL",
         "PORT"
       ]
@@ -157,6 +163,8 @@
         "STORAGE_ACCESS_KEY",
         "STORAGE_SECRET_KEY",
         "STORAGE_BUCKET",
+        "STORAGE_REGION",
+        "CRON_SECRET",
         "VERCEL_URL",
         "PORT"
       ]

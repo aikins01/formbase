@@ -48,10 +48,12 @@ export const env = createEnv({
     STORAGE_ACCESS_KEY: z.string().trim().min(1).optional(),
     STORAGE_SECRET_KEY: z.string().trim().min(1).optional(),
     STORAGE_BUCKET: z.string().trim().min(1).optional(),
+    STORAGE_REGION: z.string().trim().min(1).optional(),
 
     RESEND_API_KEY: z.string().trim().optional(),
     SMTP_TRANSPORT: z.enum(['smtp', 'resend']).optional(),
 
+    CRON_SECRET: z.string().trim().min(1).optional(),
     VERCEL_URL: z.string().optional(),
   },
   clientPrefix: 'NEXT_PUBLIC_',
