@@ -4,11 +4,13 @@ import type { NextRequest } from 'next/server';
 
 import { verifyRequestOrigin } from './lib/verify-request';
 
+const authEntryPaths = new Set(['/login', '/signup']);
+
 export function middleware(request: NextRequest): NextResponse {
   if (request.method === 'GET') {
     if (
       process.env['ALLOW_SIGNIN_SIGNUP'] === 'false' &&
-      request.nextUrl.pathname !== '/'
+      authEntryPaths.has(request.nextUrl.pathname)
     ) {
       return NextResponse.redirect(new URL('/', request.url));
     }

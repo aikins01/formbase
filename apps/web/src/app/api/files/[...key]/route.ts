@@ -3,7 +3,7 @@ import { createFileDownloadUrl } from '~/lib/upload-file';
 export const dynamic = 'force-dynamic';
 
 const isFileKey = (key: string) =>
-  /^[0-9A-Za-z]{15}\.[0-9A-Za-z._-]+$/.test(key);
+  /^[0-9A-Za-z]{15}\.[+0-9A-Za-z._-]+$/.test(key);
 
 export async function GET(
   _request: Request,

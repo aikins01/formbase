@@ -7,6 +7,7 @@ type StorageConfig = {
   accessKey: string;
   bucket: string;
   endpoint: string;
+  forcePathStyle: boolean;
   port: number;
   region: string;
   secretKey: string;
@@ -108,6 +109,12 @@ const getStorageRegion = (endpoint: string) =>
   env.STORAGE_REGION ??
   (endpoint.endsWith('.r2.cloudflarestorage.com') ? 'auto' : 'us-east-1');
 
+const getStorageForcePathStyle = (endpoint: string) =>
+  env.STORAGE_FORCE_PATH_STYLE ??
+  (endpoint === 'localhost' ||
+    endpoint.startsWith('127.') ||
+    endpoint.endsWith('.r2.cloudflarestorage.com'));
+
 const getStorageConfig = (): StorageConfig => {
   if (
     !env.STORAGE_ENDPOINT ||
@@ -123,8 +130,9 @@ const getStorageConfig = (): StorageConfig => {
   return {
     accessKey: env.STORAGE_ACCESS_KEY,
     bucket: env.STORAGE_BUCKET,
-    port: env.STORAGE_PORT,
     endpoint: env.STORAGE_ENDPOINT,
+    forcePathStyle: getStorageForcePathStyle(env.STORAGE_ENDPOINT),
+    port: env.STORAGE_PORT,
     region: getStorageRegion(env.STORAGE_ENDPOINT),
     secretKey: env.STORAGE_SECRET_KEY,
     useSSL: env.STORAGE_USESSL,
@@ -137,12 +145,22 @@ const getStorageOrigin = ({ endpoint, port, useSSL }: StorageConfig) => {
   return url.origin;
 };
 
-const createStorageUrl = (config: StorageConfig, key?: string) =>
-  new URL(
+const createStorageUrl = (config: StorageConfig, key?: string) => {
+  if (!config.forcePathStyle) {
+    return new URL(
+      `${getStorageOrigin({
+        ...config,
+        endpoint: `${config.bucket}.${config.endpoint}`,
+      })}${key ? `/${encodePath(key)}` : ''}`,
+    );
+  }
+
+  return new URL(
     `${getStorageOrigin(config)}/${encodePath(config.bucket)}${
       key ? `/${encodePath(key)}` : ''
     }`,
   );
+};
 
 const createFileUrl = (key: string) =>
   new URL(`/api/files/${encodePath(key)}`, env.NEXT_PUBLIC_APP_URL).toString();

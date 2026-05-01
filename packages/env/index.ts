@@ -42,9 +42,18 @@ export const env = createEnv({
     SKIP_EMAIL_VERIFICATION: booleanFromString.optional(),
 
     UMAMI_TRACKING_ID: z.string().optional(),
-    STORAGE_ENDPOINT: z.string().trim().min(1).optional(),
+    STORAGE_ENDPOINT: z
+      .string()
+      .trim()
+      .min(1)
+      .refine(
+        (endpoint) => !/^https?:\/\//i.test(endpoint),
+        'Do not include protocol in STORAGE_ENDPOINT',
+      )
+      .optional(),
     STORAGE_PORT: z.coerce.number().int().min(1).optional(),
     STORAGE_USESSL: booleanFromString.optional(),
+    STORAGE_FORCE_PATH_STYLE: booleanFromString.optional(),
     STORAGE_ACCESS_KEY: z.string().trim().min(1).optional(),
     STORAGE_SECRET_KEY: z.string().trim().min(1).optional(),
     STORAGE_BUCKET: z.string().trim().min(1).optional(),
